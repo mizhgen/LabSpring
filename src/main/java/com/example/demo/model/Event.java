@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.sql.Time;
-import java.time.LocalDate;
+import java.sql.Date;
 
 import javax.persistence.*;
 
@@ -22,7 +22,7 @@ public class Event implements Serializable {
 
     @Column(name = "date")
     @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate date;
+    private Date date;
 
     @Column(name = "time")
     private Time time;
@@ -47,11 +47,11 @@ public class Event implements Serializable {
         this.title = title;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
