@@ -11,7 +11,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@JacksonXmlRootElement(localName = "Book")
+@JacksonXmlRootElement(localName = "Event")
 @Table(schema = "public", name = "event")
 public class Event implements Serializable {
 
