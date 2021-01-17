@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.log.JmsSenderService;
 import com.example.demo.model.Address;
 import com.example.demo.repos.AddressRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,10 +19,12 @@ import java.io.StringReader;
 public class AddressController {
 
     private AddressRepo addressRepo;
+    private JmsSenderService jmsSenderService;
 
     @Autowired
-    public AddressController(AddressRepo addressRepo){
+    public AddressController(AddressRepo addressRepo, JmsSenderService jmsSenderService){
         this.addressRepo = addressRepo;
+        this.jmsSenderService = jmsSenderService;
     }
 
     @GetMapping(value = "/address")
@@ -44,25 +47,25 @@ public class AddressController {
     }
 
     @PostMapping("/createAddress")
-    public void createAddress(@RequestBody Address addressToCreate){
+    public void createAddress(@RequestBody Address addressToCreate) throws NoSuchFieldException, IllegalAccessException {
         addressRepo.save(addressToCreate);
+        jmsSenderService.sendCreateChange(addressToCreate);
     }
 
     @PutMapping("/updateAddress")
-    public void updateAddress(@RequestBody Address addressToUpdate){
+    public void updateAddress(@RequestBody Address addressToUpdate) throws NoSuchFieldException, IllegalAccessException {
+        Address address = addressRepo.findById(addressToUpdate.getId()).get();
         addressRepo.save(addressToUpdate);
+        jmsSenderService.sendUpdateChange(address, addressToUpdate);
     }
 
     @DeleteMapping("/deleteAddress")
-    public void deleteAddress(@PathParam("id") int id){
+    public void deleteAddress(@PathParam("id") int id) throws NoSuchFieldException, IllegalAccessException {
         if (addressRepo.existsById(id)){
+            Address address = addressRepo.findById(id).get();
             addressRepo.deleteById(id);
+            jmsSenderService.sendDeleteChange(address);
         }
-    }
-
-    @DeleteMapping("/deleteAllAddresses")
-    public void deleteAllAddresses(){
-        addressRepo.deleteAll();
     }
 
 }

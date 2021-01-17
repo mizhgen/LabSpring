@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.log.JmsSenderService;
 import com.example.demo.model.Event;
 import com.example.demo.repos.EventRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,10 +18,12 @@ import java.io.StringReader;
 @RestController
 public class EventController {
     private EventRepo eventRepo;
+    private JmsSenderService jmsSenderService;
 
     @Autowired(required = true)
-    public void setEventRepo(EventRepo eventRepo) {
+    public void setEventRepo(EventRepo eventRepo, JmsSenderService jmsSenderService) {
         this.eventRepo = eventRepo;
+        this.jmsSenderService = jmsSenderService;
     }
 
     @GetMapping("events")
@@ -43,25 +46,26 @@ public class EventController {
     }
 
     @PostMapping("/createEvent")
-    public void createEvent(@RequestBody Event event) {
+    public void createEvent(@RequestBody Event event) throws NoSuchFieldException, IllegalAccessException {
         eventRepo.save(event);
+        jmsSenderService.sendCreateChange(event);
+
     }
 
     @PutMapping("/updateEvent")
-    public void updateEvent(@RequestBody Event eventToUpdate) {
+    public void updateEvent(@RequestBody Event eventToUpdate) throws NoSuchFieldException, IllegalAccessException {
+        Event event = eventRepo.findById(eventToUpdate.getId()).get();
         eventRepo.save(eventToUpdate);
+        jmsSenderService.sendUpdateChange(event, eventToUpdate);
     }
 
     @DeleteMapping("/deleteEventById")
-    public void deleteEventById(@PathParam("id") int id) {
+    public void deleteEventById(@PathParam("id") int id) throws NoSuchFieldException, IllegalAccessException {
         if (eventRepo.existsById(id)) {
+            Event event = eventRepo.findById(id).get();
             eventRepo.deleteById(id);
+            jmsSenderService.sendDeleteChange(event);
         }
-    }
-
-    @DeleteMapping("/deleteAllBooks")
-    public void deleteAllBooks() {
-        eventRepo.deleteAll();
     }
 
 }

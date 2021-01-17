@@ -2,9 +2,11 @@ package com.example.demo.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(schema = "public", name = "address")
+@XmlRootElement
 public class Address implements Serializable {
     @Id
     @Column(name = "id")
@@ -52,4 +54,13 @@ public class Address implements Serializable {
         this.building = building;
     }
 
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", city='" + city + '\'' +
+                ", street='" + street + '\'' +
+                ", building='" + building + '\'' +
+                '}';
+    }
 }

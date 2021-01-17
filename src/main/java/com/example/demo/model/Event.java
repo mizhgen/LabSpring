@@ -1,14 +1,17 @@
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Date;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
+@JacksonXmlRootElement(localName = "Book")
 @Table(schema = "public", name = "event")
 public class Event implements Serializable {
 
@@ -69,5 +72,16 @@ public class Event implements Serializable {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", date=" + date +
+                ", time=" + time +
+                ", address=" + address +
+                '}';
     }
 }
